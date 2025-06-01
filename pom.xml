@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>me.akostadinov</groupId>
+    <artifactId>taskmanager</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>TaskManager</name>
+
+    <properties>
+        <author>Alexander Kostadinov</author>
+        <main.class>me.akostadinov.taskmanager.TaskManager</main.class>
+
+        <!-- Change to the latest one from https://github.com/kangarko/Foundation/releases
+             or change to "LATEST" if you downloaded Foundation to your disk. -->
+        <foundation.version>6.9.19</foundation.version>
+        <foundation.path>com.github.kangarko</foundation.path>
+
+        <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <repositories>
+        <!-- DO NOT EDIT, used to pull Foundation from the JitPack site. -->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+
+        <repository>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+    </repositories>
+
+    <!-- UNCOMMENT ONLY IF YOUR java.version IS SET TO JAVA 16 OR HIGHER. -->
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven-snapshots</id>
+            <url>https://repository.apache.org/content/repositories/snapshots/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <dependencies>
+        <!-- Use our Foundation library - it contains SpigotAPI so you do not need to import that, only import
+              your API if you build for a different version than we (Foundation uses the latest one). In that case,
+             place your API above Foundation so Maven will prioritize it. -->
+        <dependency>
+            <groupId>${foundation.path}</groupId>
+            <artifactId>Foundation</artifactId>
+            <version>${foundation.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.21.4-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.name}-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+
+                <!-- Change version to the latest one from
+                     https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
+                <version>3.2.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+
+                <!-- Change version to the latest one from
+                     https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+                <version>3.13.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+
+                <!-- Change version to the latest one from
+                     https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-shade-plugin
+
+                     IF YOU USE JAVA 16 THEN PLACE 3.3.0-SNAPSHOT TO THE VERSION AND MAKE SURE TO
+                     UNCOMMENT <pluginRepositories> above.
+                     -->
+                <version>3.5.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <artifactSet>
+                        <includes>
+                            <include>${foundation.path}:Foundation*</include>
+                        </includes>
+                    </artifactSet>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.mineacademy.fo</pattern>
+                            <shadedPattern>${project.groupId}.${project.artifactId}.lib</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+</project>
